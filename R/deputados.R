@@ -5,7 +5,7 @@
 #' @importFrom dplyr mutate_at
 #' @importFrom stringi stri_trans_general
 #' @importFrom magrittr "%>%"
-#'
+#' @importFrom partycodesbr tse_codes
 #' @param legislature Integer starting from 1. See Notes.
 #' @note For the legislature parameter, 1 represents the first legislature
 #' recorded, which sat during the  period of 1947-1951. Following numbers then
@@ -36,7 +36,15 @@ deputados <- function(legislature = NULL){
 
 #' @param name Legislator name.
 #' @param area Legislative area in which the deputy operates e.g. "Area Fiscal".
-#' @param party Legislator's political party.
+#' @param party Legislator's political party. These are numerical codes from the
+#' Tribunal Superior Eleitoral (TSE). These may be seen with the \code{party_codes()}
+#' function.
+#' @param legislature Integer starting from 1. See Notes.
+#' @param webpage In an interactive session, prints a HTML page of deputy info.
+#' @note For the legislature parameter, 1 represents the first legislature
+#' recorded, which sat during the  period of 1947-1951. Following numbers then
+#' represent the other legislatures in sequence. As of late 2018, the latest
+#' available is 18.
 #' @export
 deputado <- function(name = NULL, area = NULL, party = NULL,
                      electoral_base = NULL, legislature = NULL,
@@ -65,7 +73,7 @@ deputado <- function(name = NULL, area = NULL, party = NULL,
 
   colnames(df) <- stringi::stri_trans_general(colnames(df), "Latin-ASCII")
 
-  if(!is.null(legislature)){
+  if(!is.null(legislature) | !interactive()){
     if(legislature < 15) webpage <- FALSE
   }
 
@@ -126,13 +134,7 @@ deputado <- function(name = NULL, area = NULL, party = NULL,
 }
 
 
-
-
-# need to make a hash table of parties etc.
-hash <- tibble::tibble(
-  party = c("PT", "PSB", "PV", "DEM", "PSDB", "PR", "DC", "PP", "PTB", "PSOL",
-            "PSC", "PSD", "AVANTE", "PPS", "PRP", "PROS", "PRB", "PC do B",
-            "MDB", "PATRI", "PODE"),
-  number = 0
-)
-
+#' @export
+party_codes <- function(){
+  partycodesbr::tse_codes()
+}
